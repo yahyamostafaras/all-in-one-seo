@@ -21,7 +21,7 @@ def keyword_research(keyword):
         return ["Error fetching keywords."]
 
 st.title("SEO Automation Tool")
-    
+
 def on_page_seo_analysis(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -49,9 +49,13 @@ def content_optimization(text):
 
 st.title("SEO Automation Tool")
 
-option = st.sidebar.selectbox("Choose a Task", ["Keyword Research", "On-Page SEO Analysis", "Backlink Monitoring", "Site Audit", "Rank Tracking", "Content Optimization"])
+option = st.sidebar.selectbox("Choose a Task", 
+    ["Keyword Research", "On-Page SEO Analysis", "Backlink Monitoring", 
+     "Site Audit", "Rank Tracking", "Content Optimization"]
+)
 
-elif option == "Keyword Research":
+# ✅ Fix: Start with `if` instead of `elif`
+if option == "Keyword Research":
     keyword = st.text_input("Enter a keyword")
 
     if st.button("Get Suggestions"):
@@ -60,10 +64,6 @@ elif option == "Keyword Research":
         
         for i, kw in enumerate(results):
             st.write(f"{i+1}. {kw}")
-
-elif option == "On-Page SEO Analysis":
-    # Your other SEO functions here
-    pass
 
 elif option == "On-Page SEO Analysis":
     url = st.text_input("Enter URL")
