@@ -5,23 +5,20 @@ import re
 import time
 
 def keyword_research(keyword):
-    """Fetch keyword suggestions from Google Search Autocomplete."""
-    url = f"https://www.google.com/search?q={keyword}"
+    """
+    Fetch keyword suggestions from Google's Autocomplete API.
+    """
+    url = f"https://suggestqueries.google.com/complete/search?client=firefox&q={keyword}"
     headers = {"User-Agent": "Mozilla/5.0"}
 
     response = requests.get(url, headers=headers)
-    if response.status_code != 200:
-        return ["Error fetching keywords"]
-
-    soup = BeautifulSoup(response.text, "html.parser")
-    suggestions = []
     
-    for suggestion in soup.select("li span"):  # Extract autocomplete suggestions
-        text = suggestion.text.strip()
-        if text and text.lower() != keyword.lower():
-            suggestions.append(text)
-
-    return suggestions[:20]  # Limit to 10 results
+    if response.status_code == 200:
+        data = response.json()
+        suggestions = data[1]  # Extract keyword suggestions
+        return suggestions if suggestions else ["No suggestions found."]
+    else:
+        return ["Error fetching keywords."]
 
 st.title("SEO Automation Tool")
     
@@ -54,18 +51,15 @@ st.title("SEO Automation Tool")
 
 option = st.sidebar.selectbox("Choose a Task", ["Keyword Research", "On-Page SEO Analysis", "Backlink Monitoring", "Site Audit", "Rank Tracking", "Content Optimization"])
 
-if option == "Keyword Research":
+elif option == "Keyword Research":
     keyword = st.text_input("Enter a keyword")
 
     if st.button("Get Suggestions"):
         results = keyword_research(keyword)
         st.write("🔎 **Keyword Suggestions:**")
         
-        if results:
-            for i, kw in enumerate(results):
-                st.write(f"{i+1}. {kw}")
-        else:
-            st.write("No suggestions found. Try a different keyword.")
+        for i, kw in enumerate(results):
+            st.write(f"{i+1}. {kw}")
 
 elif option == "On-Page SEO Analysis":
     # Your other SEO functions here
