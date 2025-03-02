@@ -55,10 +55,18 @@ st.title("SEO Automation Tool")
 
 option = st.sidebar.selectbox("Choose a Task", ["Keyword Research", "On-Page SEO Analysis", "Backlink Monitoring", "Site Audit", "Rank Tracking", "Content Optimization"])
 
-if option == "Keyword Research":
+elif option == "Keyword Research":
     keyword = st.text_input("Enter a keyword")
+    
     if st.button("Get Suggestions"):
-        st.write(keyword_research(keyword))
+        results = keyword_research(keyword)  # Calls the function
+        st.write("🔎 **Keyword Suggestions:**")
+        
+        if results:
+            for i, kw in enumerate(results):
+                st.write(f"{i+1}. {kw}")  # Display results
+        else:
+            st.write("No suggestions found. Try a different keyword.")
 
 elif option == "On-Page SEO Analysis":
     url = st.text_input("Enter URL")
