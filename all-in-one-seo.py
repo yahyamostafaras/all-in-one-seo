@@ -21,7 +21,7 @@ def keyword_research(keyword):
     else:
         return ["Error fetching keywords."]
 
-st.title("SEO Automation Tool")
+
 
 def on_page_seo_analysis(url):
     response = requests.get(url)
