@@ -3,6 +3,10 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
+import spacy
+
+# Load spaCy NLP model
+nlp = spacy.load("en_core_web_sm")
 
 def keyword_research(keyword):
     """
@@ -10,7 +14,6 @@ def keyword_research(keyword):
     """
     url = f"https://suggestqueries.google.com/complete/search?client=firefox&q={keyword}"
     headers = {"User-Agent": "Mozilla/5.0"}
-
     response = requests.get(url, headers=headers)
     
     if response.status_code == 200:
@@ -19,8 +22,6 @@ def keyword_research(keyword):
         return suggestions if suggestions else ["No suggestions found."]
     else:
         return ["Error fetching keywords."]
-
-st.title("SEO Automation Tool")
 
 def on_page_seo_analysis(url):
     response = requests.get(url)
@@ -43,25 +44,28 @@ def rank_tracking(keyword):
     return {"keyword": keyword, "rank": 10}
 
 def content_optimization(text):
-    word_count = len(text.split())
+    """
+    AI-powered content optimization using spaCy NLP.
+    """
+    doc = nlp(text)
+    word_count = len(doc)
     readability_score = "Easy" if word_count < 200 else "Moderate"
-    return {"word_count": word_count, "readability": readability_score}
+    keywords = [token.text for token in doc if token.is_alpha and not token.is_stop]
+    keyword_freq = {k: keywords.count(k) for k in set(keywords)}
+    return {"word_count": word_count, "readability": readability_score, "keyword_density": keyword_freq}
 
+# Streamlit UI
 st.title("SEO Automation Tool")
 
 option = st.sidebar.selectbox("Choose a Task", 
     ["Keyword Research", "On-Page SEO Analysis", "Backlink Monitoring", 
-     "Site Audit", "Rank Tracking", "Content Optimization"]
-)
+     "Site Audit", "Rank Tracking", "Content Optimization"])
 
-# ✅ Fix: Start with `if` instead of `elif`
 if option == "Keyword Research":
     keyword = st.text_input("Enter a keyword")
-
     if st.button("Get Suggestions"):
         results = keyword_research(keyword)
         st.write("🔎 **Keyword Suggestions:**")
-        
         for i, kw in enumerate(results):
             st.write(f"{i+1}. {kw}")
 
