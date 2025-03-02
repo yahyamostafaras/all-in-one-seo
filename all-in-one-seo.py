@@ -3,6 +3,9 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
+import spacy
+import nltk
+
 
 def keyword_research(keyword):
     """
