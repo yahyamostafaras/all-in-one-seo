@@ -5,27 +5,26 @@ import re
 import time
 
 def keyword_research(keyword):
-    """
-    Fetch keyword suggestions from Google Search Autocomplete without an API.
-    """
+    """Fetch keyword suggestions from Google Search Autocomplete."""
     url = f"https://www.google.com/search?q={keyword}"
     headers = {"User-Agent": "Mozilla/5.0"}
-    
+
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
         return ["Error fetching keywords"]
 
     soup = BeautifulSoup(response.text, "html.parser")
-    
-    # Extract suggestions (found inside Google search results page)
     suggestions = []
-    for suggestion in soup.select("li span"):  # Common structure for suggestions
-        text = suggestion.text.strip()
-        if text and text.lower() != keyword.lower():  # Remove duplicate searches
-            suggestions.append(text)
     
-    return suggestions[:20]  # Limit to 10 suggestions
+    for suggestion in soup.select("li span"):  # Extract autocomplete suggestions
+        text = suggestion.text.strip()
+        if text and text.lower() != keyword.lower():
+            suggestions.append(text)
 
+    return suggestions[:20]  # Limit to 10 results
+
+st.title("SEO Automation Tool")
+    
 def on_page_seo_analysis(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -55,18 +54,22 @@ st.title("SEO Automation Tool")
 
 option = st.sidebar.selectbox("Choose a Task", ["Keyword Research", "On-Page SEO Analysis", "Backlink Monitoring", "Site Audit", "Rank Tracking", "Content Optimization"])
 
-elif option == "Keyword Research":
+if option == "Keyword Research":
     keyword = st.text_input("Enter a keyword")
-    
+
     if st.button("Get Suggestions"):
-        results = keyword_research(keyword)  # Calls the function
+        results = keyword_research(keyword)
         st.write("🔎 **Keyword Suggestions:**")
         
         if results:
             for i, kw in enumerate(results):
-                st.write(f"{i+1}. {kw}")  # Display results
+                st.write(f"{i+1}. {kw}")
         else:
             st.write("No suggestions found. Try a different keyword.")
+
+elif option == "On-Page SEO Analysis":
+    # Your other SEO functions here
+    pass
 
 elif option == "On-Page SEO Analysis":
     url = st.text_input("Enter URL")
