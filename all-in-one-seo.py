@@ -5,7 +5,26 @@ import re
 import time
 
 def keyword_research(keyword):
-    return [keyword + " review", keyword + " best", keyword + " cheap"]
+    """
+    Fetch keyword suggestions from Google Search Autocomplete without an API.
+    """
+    url = f"https://www.google.com/search?q={keyword}"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    
+    response = requests.get(url, headers=headers)
+    if response.status_code != 200:
+        return ["Error fetching keywords"]
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    
+    # Extract suggestions (found inside Google search results page)
+    suggestions = []
+    for suggestion in soup.select("li span"):  # Common structure for suggestions
+        text = suggestion.text.strip()
+        if text and text.lower() != keyword.lower():  # Remove duplicate searches
+            suggestions.append(text)
+    
+    return suggestions[:20]  # Limit to 10 suggestions
 
 def on_page_seo_analysis(url):
     response = requests.get(url)
